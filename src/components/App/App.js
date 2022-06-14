@@ -1,17 +1,29 @@
 import React, { Component } from 'react';
 import './App.css';
-import {getOrders} from '../../apiCalls';
+// import {getOrders} from '../../apiCalls';
 import Orders from '../../components/Orders/Orders';
 import OrderForm from '../../components/OrderForm/OrderForm';
 
 class App extends Component {
   constructor(props) {
     super();
+    this.state = {
+      orders: '',
+    }
   }
 
-  componentDidMount() {
-    getOrders()
-      .catch(err => console.error('Error fetching:', err));
+  componentDidMount = () => {
+    fetch('http://localhost:3001/api/v1/orders')
+      .then(response => response.json())
+      .then(data => this.setState({ orders: data.orders }))
+      .catch(err => console.log('Error fetching:', err))
+  }
+
+  componentDidUpdate = () => {
+      fetch('http://localhost:3001/api/v1/orders')
+        .then(response => response.json())
+        .then(data => this.setState({ orders: data.orders }))
+        .catch(err => console.log('Error fetching:', err))
   }
 
   render() {
@@ -22,7 +34,7 @@ class App extends Component {
           <OrderForm />
         </header>
 
-        <Orders orders={this.state.orders}/>
+        {this.state.orders && <Orders orders={this.state.orders}/>}
       </main>
     );
   }
