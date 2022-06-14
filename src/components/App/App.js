@@ -9,7 +9,11 @@ class App extends Component {
     super();
     this.state = {
       orders: '',
+      changed: 1
     }
+
+    this.changeState = this.changeState.bind(this)
+
   }
 
   componentDidMount = () => {
@@ -19,11 +23,17 @@ class App extends Component {
       .catch(err => console.log('Error fetching:', err))
   }
 
-  componentDidUpdate = () => {
-      fetch('http://localhost:3001/api/v1/orders')
-        .then(response => response.json())
-        .then(data => this.setState({ orders: data.orders }))
-        .catch(err => console.log('Error fetching:', err))
+  componentDidUpdate = (prevState) => {
+    if(prevState.changed !== this.state.changed) {
+    fetch('http://localhost:3001/api/v1/orders')
+      .then(response => response.json())
+      .then(data => this.setState({ orders: data.orders }))
+      .catch(err => console.log('Error fetching:', err))
+      }
+  }
+
+  changeState = () => {
+    this.setState( prevState => ({ changed: prevState.changed + 1 }))
   }
 
   render() {
@@ -31,10 +41,9 @@ class App extends Component {
       <main className="App">
         <header>
           <h1>Burrito Builder</h1>
-          <OrderForm />
+          <OrderForm orders={this.state.orders} changeState={() => this.changeState}/>
         </header>
-
-        {this.state.orders && <Orders orders={this.state.orders}/>}
+        {this.state.orders && <Orders orders={this.state.orders} />}
       </main>
     );
   }

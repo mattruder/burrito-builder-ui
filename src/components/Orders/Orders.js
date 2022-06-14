@@ -17,7 +17,7 @@ function Orders({ orders })  {
   });
 
   return (
-    <section>
+    <section className="all-orders">
       { orderEls.length ? orderEls : <p>No orders yet!</p> }
     </section>
   )
